@@ -1,0 +1,150 @@
+---
+title: "ENS score visualisation"
+author: "Beni Stocker"
+date: "2022-07-28"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(cowplot)
+library(forcats)
+```
+
+```{r}
+df <- read_csv("~/vis_ens_scores/data/ens_scores.csv") %>% 
+  pivot_longer(cols = c(ENS, MAD, OLS, EMD, SSIM), names_to = "metric", values_to = "value")
+```
+
+
+```{r}
+# ENS
+gg1 <- df %>% 
+  filter(metric == "ENS") %>% 
+  mutate(highlight = ifelse(model %in% c("SGEDConvLSTM", "SGConvLSTM"), "yes", "no"),
+         model = str_replace(model, "SGEDConvLSTM", "SGED"),
+         model = str_replace(model, "SGConvLSTM", "SG")) %>% 
+  mutate(model = fct_relevel(model, "PBL", "Arcon", "Unet", "Dia", "SGED", "SG"),
+         track = fct_relevel(track, "iid", "ood", "extreme", "seasonal")) %>% 
+  ggplot(aes(x = model, y = value, fill = highlight)) +
+  scale_fill_manual( values = c( "yes"="tomato2", "no"="gray50" ), guide = "none" ) +
+  geom_bar(stat="identity", position = "identity") +
+  facet_wrap(~track, scales='free') +
+  theme_classic() +
+  labs(title ="ENS", x = "Model", y = "Score") +
+  scale_y_continuous(limits = c(0, 0.35), expand = c(0, 0)) +
+  theme(
+   strip.background = element_rect(
+     fill="grey70", color = NA
+     ),
+   strip.text = element_text(face = "italic"),
+   plot.title = element_text(face = "bold")
+   )
+
+# MAD
+gg2 <- df %>% 
+  filter(metric == "MAD") %>% 
+  mutate(highlight = ifelse(model %in% c("SGEDConvLSTM", "SGConvLSTM"), "yes", "no"),
+         model = str_replace(model, "SGEDConvLSTM", "SGED"),
+         model = str_replace(model, "SGConvLSTM", "SG")) %>% 
+  mutate(model = fct_relevel(model, "PBL", "Arcon", "Unet", "Dia", "SGED", "SG"),
+         track = fct_relevel(track, "iid", "ood", "extreme", "seasonal")) %>% 
+  ggplot(aes(x = model, y = value, fill = highlight)) +
+  scale_fill_manual( values = c( "yes"="tomato2", "no"="gray50" ), guide = "none" ) +
+  geom_bar(stat="identity", position = "identity") +
+  facet_wrap(~track, scales='free') +
+  theme_classic() +
+  labs(title ="MAD", x = "Model", y = "Score") +
+  scale_y_continuous(limits = c(0, 0.35), expand = c(0, 0)) +
+  theme(
+   strip.background = element_rect(
+     fill="grey70", color = NA
+     ),
+   strip.text = element_text(face = "italic"),
+   plot.title = element_text(face = "bold")
+   )
+
+# OLS
+gg3 <- df %>% 
+  filter(metric == "OLS") %>% 
+  mutate(highlight = ifelse(model %in% c("SGEDConvLSTM", "SGConvLSTM"), "yes", "no"),
+         model = str_replace(model, "SGEDConvLSTM", "SGED"),
+         model = str_replace(model, "SGConvLSTM", "SG")) %>% 
+  mutate(model = fct_relevel(model, "PBL", "Arcon", "Unet", "Dia", "SGED", "SG"),
+         track = fct_relevel(track, "iid", "ood", "extreme", "seasonal")) %>% 
+  ggplot(aes(x = model, y = value, fill = highlight)) +
+  scale_fill_manual( values = c( "yes"="tomato2", "no"="gray50" ), guide = "none" ) +
+  geom_bar(stat="identity", position = "identity") +
+  facet_wrap(~track, scales='free') +
+  theme_classic() +
+  labs(title ="OLS", x = "Model", y = "Score") +
+  scale_y_continuous(limits = c(0, 0.45), expand = c(0, 0)) +
+  theme(
+   strip.background = element_rect(
+     fill="grey70", color = NA
+     ),
+   strip.text = element_text(face = "italic"),
+   plot.title = element_text(face = "bold")
+   )
+
+# EMD
+gg4 <- df %>% 
+  filter(metric == "EMD") %>% 
+  mutate(highlight = ifelse(model %in% c("SGEDConvLSTM", "SGConvLSTM"), "yes", "no"),
+         model = str_replace(model, "SGEDConvLSTM", "SGED"),
+         model = str_replace(model, "SGConvLSTM", "SG")) %>% 
+  mutate(model = fct_relevel(model, "PBL", "Arcon", "Unet", "Dia", "SGED", "SG"),
+         track = fct_relevel(track, "iid", "ood", "extreme", "seasonal")) %>% 
+  ggplot(aes(x = model, y = value, fill = highlight)) +
+  scale_fill_manual( values = c( "yes"="tomato2", "no"="gray50" ), guide = "none" ) +
+  geom_bar(stat="identity", position = "identity") +
+  facet_wrap(~track, scales='free') +
+  theme_classic() +
+  labs(title ="EMD", x = "Model", y = "Score") +
+  scale_y_continuous(limits = c(0, 0.35), expand = c(0, 0)) +
+  theme(
+   strip.background = element_rect(
+     fill="grey70", color = NA
+     ),
+   strip.text = element_text(face = "italic"),
+   plot.title = element_text(face = "bold")
+   )
+
+# SSIM
+gg5 <- df %>% 
+  filter(metric == "SSIM") %>% 
+  mutate(highlight = ifelse(model %in% c("SGEDConvLSTM", "SGConvLSTM"), "yes", "no"),
+         model = str_replace(model, "SGEDConvLSTM", "SGED"),
+         model = str_replace(model, "SGConvLSTM", "SG")) %>% 
+  mutate(model = fct_relevel(model, "PBL", "Arcon", "Unet", "Dia", "SGED", "SG"),
+         track = fct_relevel(track, "iid", "ood", "extreme", "seasonal")) %>% 
+  ggplot(aes(x = model, y = value, fill = highlight)) +
+  scale_fill_manual( values = c( "yes"="tomato2", "no"="gray50" ), guide = "none" ) +
+  geom_bar(stat="identity", position = "identity") +
+  facet_wrap(~track, scales='free') +
+  theme_classic() +
+  labs(title ="SSIM", x = "Model", y = "Score") +
+  scale_y_continuous(limits = c(0, 0.6), expand = c(0, 0)) +
+  theme(
+   strip.background = element_rect(
+     fill="grey70", color = NA
+     ),
+   strip.text = element_text(face = "italic"),
+   plot.title = element_text(face = "bold")
+   )
+
+gg1
+ggsave("~/vis_ens_scores/fig/ens.pdf", width = 6, height = 5)
+gg2
+ggsave("~/vis_ens_scores/fig/mad.pdf", width = 6, height = 5)
+gg3
+ggsave("~/vis_ens_scores/fig/ols.pdf", width = 6, height = 5)
+gg4
+ggsave("~/vis_ens_scores/fig/emd.pdf", width = 6, height = 5)
+gg5
+ggsave("~/vis_ens_scores/fig/ssim.pdf", width = 6, height = 5)
+
+# plot_grid(gg1, gg2, gg3, gg4, gg5, gg6, rel_widths = c(0.5, 0.8), ncol = 2, labels = c("a", "b", "c", "d", "e", "f"))
+# ggsave("fig/bars_model_fitting.pdf", width = 6, height = 8)
+```
